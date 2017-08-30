@@ -4,6 +4,7 @@ extern crate clang_sys;
 extern crate libc;
 
 pub mod cursor;
+pub mod diagnostic;
 pub mod index;
 pub mod tu;
 mod util;

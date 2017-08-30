@@ -526,7 +526,7 @@ pub struct Cursor {
 
 pub type CursorVisitor = fn(_: Cursor, _: Cursor, _: &mut Any) -> ChildVisitResult;
 
-struct VisitorData <'a> {
+struct VisitorData<'a> {
     visitor: CursorVisitor,
     data: &'a mut Any
 }
@@ -555,7 +555,8 @@ impl Cursor {
     }
 
     pub fn kind(&self) -> Kind {
-        unsafe { Kind::from(clang_sys::clang_getCursorKind(self.obj)) }
+        let k = unsafe { clang_sys::clang_getCursorKind(self.obj) };
+        Kind::from(k)
     }
 
     pub fn display_name(&self) -> ::String {

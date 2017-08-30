@@ -1,4 +1,5 @@
 use cursor;
+use diagnostic;
 use index;
 use util;
 
@@ -85,6 +86,11 @@ impl TranslationUnit {
         unsafe {
             cursor::Cursor::from_obj(clang_sys::clang_getTranslationUnitCursor(self.ptr))
         }
+    }
+
+    pub fn get_diagnostics(&self) -> diagnostic::DiagnosticIterator {
+        let num_diagnostics = unsafe { clang_sys::clang_getNumDiagnostics(self.ptr) };
+        diagnostic::DiagnosticIterator::new(self, num_diagnostics)
     }
 }
 
