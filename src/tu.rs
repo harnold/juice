@@ -43,13 +43,11 @@ impl TranslationUnit {
     where
         I: IntoIterator<Item = &'a str>,
     {
-
         let source_filename_cstr = util::cstring_from_str(source_filename);
-        let command_line_args_cstr = command_line_args.into_iter().map(|s| {
-            util::cstring_from_str(s)
-        });
+        let command_line_args_cstr_vec: Vec<_> =
+            command_line_args.into_iter().map(|s| { util::cstring_from_str(s) }).collect();
         let command_line_args_ptr_vec: Vec<_> =
-            command_line_args_cstr.map(|s| s.as_ptr()).collect();
+            command_line_args_cstr_vec.iter().map(|s| s.as_ptr()).collect();
 
         let mut tu_ptr: clang_sys::CXTranslationUnit = ptr::null_mut();
 
@@ -89,7 +87,9 @@ impl TranslationUnit {
     }
 
     pub fn get_diagnostics(&self) -> diagnostic::DiagnosticIterator {
-        let num_diagnostics = unsafe { clang_sys::clang_getNumDiagnostics(self.ptr) };
+        let num_diagnostics = unsafe {
+            clang_sys::clang_getNumDiagnostics(self.ptr)
+        };
         diagnostic::DiagnosticIterator::new(self, num_diagnostics)
     }
 }
