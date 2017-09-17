@@ -6,6 +6,7 @@ extern crate libc;
 pub mod cursor;
 pub mod diagnostic;
 pub mod index;
+pub mod loc;
 pub mod tu;
 mod util;
 

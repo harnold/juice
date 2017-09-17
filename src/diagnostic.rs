@@ -1,3 +1,4 @@
+use loc;
 use tu;
 
 use clang_sys;
@@ -40,6 +41,11 @@ impl Diagnostic {
     pub fn spelling(&self) -> ::String {
         let s = unsafe { clang_sys::clang_getDiagnosticSpelling(self.ptr) };
         ::String::from(s)
+    }
+
+    pub fn location(&self) -> loc::SourceLocation {
+        let l = unsafe { clang_sys::clang_getDiagnosticLocation(self.ptr) };
+        loc::SourceLocation::from_obj(l)
     }
 }
 
