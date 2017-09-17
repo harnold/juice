@@ -69,6 +69,7 @@ impl<'a> DiagnosticIterator<'a> {
 
 impl<'a> Iterator for DiagnosticIterator<'a> {
     type Item = Diagnostic;
+
     fn next(&mut self) -> Option<Self::Item> {
         if self.current < self.num_diagnostics {
             let diag_ptr = unsafe {
@@ -79,6 +80,11 @@ impl<'a> Iterator for DiagnosticIterator<'a> {
         } else {
             None
         }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let remaining = (self.num_diagnostics - self.current) as usize;
+        (remaining, Some(remaining))
     }
 }
 
