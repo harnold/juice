@@ -5,6 +5,7 @@ use util;
 
 use clang_sys;
 use std::ptr;
+use std::time;
 
 bitflags! {
     pub struct Flags: u32 {
@@ -99,5 +100,26 @@ impl Drop for TranslationUnit {
         unsafe {
             clang_sys::clang_disposeTranslationUnit(self.ptr);
         }
+    }
+}
+
+#[derive(Copy, Clone)]
+pub struct File {
+    ptr: clang_sys::CXFile
+}
+
+impl File {
+    pub fn from_ptr(ptr: clang_sys::CXFile) -> Self {
+        File { ptr: ptr }
+    }
+
+    pub fn file_name(&self) -> ::String {
+        let s = unsafe { clang_sys::clang_getFileName(self.ptr) };
+        ::String::from(s)
+    }
+
+    pub fn last_modification_time(&self) -> time::SystemTime {
+        let t = unsafe { clang_sys::clang_getFileTime(self.ptr) };
+        time::UNIX_EPOCH + time::Duration::from_secs(t as u64)
     }
 }
