@@ -1,6 +1,7 @@
 use cursor;
 use diagnostic;
 use index;
+use libc;
 use util;
 
 use clang_sys;
@@ -18,10 +19,8 @@ bitflags! {
         const CXX_CHAINED_PCH                               = 0x20;
         const SKIP_FUNCTION_BODIES                          = 0x40;
         const INCLUDE_BRIEF_COMMENTS_IN_CODE_COMPLETIONS    = 0x80;
-        // #[cfg(feature="gte_clang_3_8")]
-        // const CREATE_PREAMBLE_ON_FIRST_PARSE                = 0x100;
-        // #[cfg(feature="gte_clang_3_9")]
-        // const KEEP_GOING                                    = 0x200;
+        const CREATE_PREAMBLE_ON_FIRST_PARSE                = 0x100;
+        const KEEP_GOING                                    = 0x200;
     }
 }
 
@@ -60,7 +59,7 @@ impl TranslationUnit {
                 util::i32_from_usize(command_line_args_ptr_vec.len()),
                 ptr::null_mut(),
                 0,
-                clang_sys::CXTranslationUnit_Flags::from_bits_truncate(flags.bits),
+                clang_sys::CXTranslationUnit_Flags::from(flags.bits as libc::c_int),
                 &mut tu_ptr,
             )
         };
